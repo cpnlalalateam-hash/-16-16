@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>🐾 魂の犬種診断 — MBTI×犬×占い</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1: #fffdf9;
+    --bg2: #f6fbff;
+    --card: #ffffff;
+    --accent: #ff9f43;
+    --muted: #6b7280;
+    --maxw: 1100px;
+  }
+  *{box-sizing:border-box}
+  body{
+    font-family: "Karla", system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+    background: linear-gradient(180deg,var(--bg1),var(--bg2));
+    margin:0;
+    color:#222;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  .wrap{max-width:var(--maxw); margin:28px auto; padding:20px;}
+  header{display:flex; align-items:center; gap:18px; justify-content:space-between; flex-wrap:wrap;}
+  .title{display:flex; gap:12px; align-items:center;}
+  .logo{
+    width:64px; height:64px; border-radius:12px; background:linear-gradient(135deg,#fff,#ffeacd); display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.08); font-family:"Baloo 2", sans-serif; font-size:26px; color:var(--accent);
+  }
+  h1{margin:0; font-size:20px;}
+  .subtitle{color:var(--muted); font-size:13px; margin-top:4px;}
+  .card{background:var(--card); border-radius:16px; padding:18px; margin-top:18px; box-shadow:0 10px 28px rgba(12,12,12,0.06);}
+  .center{text-align:center}
+  .grid-two{display:flex; gap:18px; align-items:flex-start;}
+  .col{flex:1;}
+  label.option{display:block; background:#fbfbfb; border-radius:10px; padding:12px; margin:8px 0; cursor:pointer; border:1px solid #eee;}
+  input[type="radio"]{margin-right:10px;}
+  input[type="text"]{padding:10px; border-radius:8px; border:1px solid #e7e7e7; width:100%;}
+  .btn{background:var(--accent); color:#fff; border:none; padding:12px 18px; border-radius:12px; cursor:pointer; font-weight:700; box-shadow:0 6px 16px rgba(0,0,0,0.08);}
+  .btn.ghost{background:#fff; color:#333; border:1px solid #eee;}
+  .hint{color:var(--muted); font-size:13px;}
+  .result-card{display:none; padding:18px; border-radius:14px; background:linear-gradient(180deg,#fff,#fff8f2); box-shadow:0 16px 40px rgba(10,10,10,0.07)}
+  .result-top{display:flex; gap:18px; align-items:center; flex-wrap:wrap;}
+  .result-img{width:320px; max-width:45%; border-radius:12px; background:#fff; padding:8px; box-shadow:0 12px 30px rgba(0,0,0,0.08);}
+  .result-title{font-family:"Baloo 2",sans-serif; font-size:20px; margin:0 0 6px 0;}
+  .type-pulse{display:inline-block; padding:6px 10px; background:#fff; border-radius:999px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,0.06);}
+  .fields{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:14px;}
+  .field{background:#fffaf0; padding:10px; border-radius:10px;}
+  .field h4{margin:0 0 6px 0;}
+  .share-row{display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap;}
+  .share-link{display:inline-block; padding:10px 14px; border-radius:10px; text-decoration:none; color:#fff; font-weight:700;}
+  .share-twitter{background:#1da1f2;}
+  .share-line{background:#00c300;}
+  .share-copy{background:#10b981;}
+  .small{font-size:13px; color:var(--muted)}
+  .affinity-list{margin-top:8px;}
+  .affinity-good{color:#d04747; font-weight:700}
+  .affinity-bad{color:#6b7280; font-weight:700}
+  .badge{display:inline-block; padding:6px 10px; border-radius:999px; background:#fff; border:1px solid #f0e6d6; margin-right:6px; font-weight:700;}
+  footer{margin-top:22px; text-align:center; color:var(--muted); font-size:13px;}
+  /* subtle animations */
+  .float-anim{animation:floaty 6s ease-in-out infinite;}
+  @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+  @media(max-width:900px){
+    .grid-two{flex-direction:column;}
+    .result-img{max-width:100%}
+    .fields{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="title">
+      <div class="logo float-anim">🐶</div>
+      <div>
+        <h1>魂の犬種診断 — MBTI×犬×占い</h1>
+        <div class="subtitle">16タイプを犬にたとえた占い。結果はイラスト＆詳細鑑定つき。</div>
+      </div>
+    </div>
+
+    <div class="center" style="min-width:220px;">
+      <div class="hint">PC表示推奨。診断は8問、結果はカード保存OK。</div>
+    </div>
+  </header>
+
+  <!-- start card -->
+  <section class="card" id="introCard">
+    <div class="center">
+      <p style="margin:6px 0"><strong>始め方：</strong> 名前を入れて、8問に直感で答えてください。</p>
+      <div style="max-width:640px; margin:0 auto;">
+        <input type="text" id="inputName" placeholder="あなたの名前（任意）">
+      </div>
+    </div>
+
+    <div class="grid-two" style="margin-top:14px;">
+      <div class="col">
+        <!-- Q1 (E/I) -->
+        <div class="card">
+          <strong>Q1 — 人と過ごすときの自分は？（E / I）</strong>
+          <label class="option"><input type="radio" name="q1" value="E"> 人といると元気が出る／社交的</label>
+          <label class="option"><input type="radio" name="q1" value="I"> 一人で充電するほうが楽／内向的</label>
+        </div>
+
+        <!-- Q2 (S/N) -->
+        <div class="card">
+          <strong>Q2 — 新しいことに取り組むとき？（S / N）</strong>
+          <label class="option"><input type="radio" name="q2" value="S"> 計画や実績を重視する</label>
+          <label class="option"><input type="radio" name="q2" value="N"> 直感や可能性を追いかける</label>
+        </div>
+
+        <!-- Q3 (T/F) -->
+        <div class="card">
+          <strong>Q3 — 対立が起きたら？（T / F）</strong>
+          <label class="option"><input type="radio" name="q3" value="T"> 論理的な判断を優先する</label>
+          <label class="option"><input type="radio" name="q3" value="F"> 相手の気持ちを大事にする</label>
+        </div>
+
+        <!-- Q4 (J/P) -->
+        <div class="card">
+          <strong>Q4 — 予定の管理は？（J / P）</strong>
+          <label class="option"><input type="radio" name="q4" value="J"> 予定はきっちり管理する</label>
+          <label class="option"><input type="radio" name="q4" value="P"> 臨機応変が得意</label>
+        </div>
+      </div>
+
+      <div class="col">
+        <!-- Q5 repeat E/I -->
+        <div class="card">
+          <strong>Q5 — 初対面の場での自分は？（E / I）</strong>
+          <label class="option"><input type="radio" name="q5" value="E"> すぐ輪に入って話す</label>
+          <label class="option"><input type="radio" name="q5" value="I"> 観察してから話す</label>
+        </div>
+
+        <!-- Q6 repeat S/N -->
+        <div class="card">
+          <strong>Q6 — 物事を選ぶときは？（S / N）</strong>
+          <label class="option"><input type="radio" name="q6" value="S"> 実際のデータや経験を優先</label>
+          <label class="option"><input type="radio" name="q6" value="N"> 全体の意味や可能性で選ぶ</label>
+        </div>
+
+        <!-- Q7 repeat T/F -->
+        <div class="card">
+          <strong>Q7 — 親しい人にする言葉は？（T / F）</strong>
+          <label class="option"><input type="radio" name="q7" value="T"> 率直で正直なフィードバックをする</label>
+          <label class="option"><input type="radio" name="q7" value="F"> 相手の感情を大切にした言葉を選ぶ</label>
+        </div>
+
+        <!-- Q8 repeat J/P -->
+        <div class="card">
+          <strong>Q8 — 期限や締切は？（J / P）</strong>
+          <label class="option"><input type="radio" name="q8" value="J"> 余裕を持って仕上げる</label>
+          <label class="option"><input type="radio" name="q8" value="P"> 締切直前に集中して仕上げる</label>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:12px; margin-top:14px; align-items:center;">
+      <button class="btn" id="startBtn">診断して占いを見る</button>
+      <button class="btn ghost" id="clearBtn">リセット</button>
+      <div style="margin-left:auto" class="hint">イラストは統一テイスト。印刷・保存OK。</div>
+    </div>
+  </section>
+
+  <!-- Result -->
+  <section class="card result-card" id="resultCard" aria-live="polite">
+    <div class="result-top">
+      <div style="flex:1;">
+        <div class="type-pulse" id="typePulse">—</div>
+        <h2 class="result-title" id="resultTitle">—</h2>
+        <div class="small" id="resultCode"></div>
+        <div style="margin-top:8px" id="shareButtons">
+          <div class="share-row">
+            <a id="shareTwitter" class="share-link share-twitter" target="_blank" rel="noopener">Xでシェア</a>
+            <a id="shareLine" class="share-link share-line" target="_blank" rel="noopener">LINEでシェア</a>
+            <button id="copyTextBtn" class="share-link share-copy">結果をコピー</button>
+            <button id="downloadCardBtn" class="btn ghost">カードをPNGで保存</button>
+          </div>
+        </div>
+        <div class="small" style="margin-top:8px">相性を深掘りするには「相性を見る」を使ってください。</div>
+      </div>
+
+      <div style="width:360px; max-width:45%;">
+        <img id="resultImg" class="result-img" alt="犬のイラスト" src="">
+      </div>
+    </div>
+
+    <div class="fields" style="margin-top:12px;">
+      <div class="field"><h4>🐾 性格の核心</h4><div id="f-core" class="small"></div></div>
+      <div class="field"><h4>💞 恋愛運</h4><div id="f-love" class="small"></div></div>
+      <div class="field"><h4>💼 仕事運</h4><div id="f-work" class="small"></div></div>
+      <div class="field"><h4>🌟 魅力・強み</h4><div id="f-strength" class="small"></div></div>
+      <div class="field"><h4>⚠ 気をつけること</h4><div id="f-caution" class="small"></div></div>
+      <div class="field"><h4>🤝 相性（深掘り）</h4><div id="f-affinity" class="small"></div></div>
+    </div>
+
+    <div style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+      <input id="partnerInput" type="text" placeholder="相手のタイプコード（例：ENFP）" style="padding:10px; border-radius:8px; border:1px solid #eee;">
+      <button class="btn" id="checkAffinityBtn">相性を見る</button>
+      <div id="affinityResult" class="small" style="margin-left:8px;"></div>
+    </div>
+  </section>
+
+  <footer>
+    made with ❤️ — 魂の犬種診断（MBTI×犬）  
+  </footer>
+</div>
+
+<!-- html2canvas for card -> png -->
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script>
+/* ---------- Data: 16 types with texts & images ---------- */
+/* Images are representative URLs (Pixabay / Unsplash style). Replace with your AI-generated assets for final release. */
+const TYPE_MAP = {
+  "ENFP": { code:"ENFP", name:"ゴールデン・レトリバー", title:"自由と冒険を愛する太陽の旅犬",
+    img:"https://cdn.pixabay.com/photo/2017/06/20/19/22/dog-2424329_1920.jpg",
+    core:"好奇心と共感にあふれ、出会いをチャンスに変えるムードメーカー。人を元気にする力がある。",
+    love:"積極的で情熱的。相手を喜ばせることが得意だが、自由も大切に。",
+    work:"企画やコミュニケーションが得意。チームに活気をもたらす役割を担う。",
+    strength:"創造性・共感力・人脈づくり。",
+    caution:"気が散りやすいので、締切やルーチン管理を意識して。",
+    affinity:"◎ INFJ（柴犬）・ESFP（ダルメシアン）・ENTJ（ワイマラナー） ／ △ ISTP（ハスキー）"
+  },
+  "INFJ": { code:"INFJ", name:"柴犬", title:"静けさの中に燃える灯",
+    img:"https://cdn.pixabay.com/photo/2020/03/08/17/37/shiba-4912505_1920.jpg",
+    core:"直感と深い共感で人を導く理想主義者。限られた関係に深く献身する。",
+    love:"少数の人と深い絆を求める恋愛。誠実さを重んじる。",
+    work:"意味のあるプロジェクトやカウンセリングで力を発揮。",
+    strength:"洞察力・信念・誠実さ。",
+    caution:"燃え尽きやすいのでセルフケアを大切に。",
+    affinity:"◎ ENFP（ゴールデン）・ENTP（プードル）・INFJ（同志） ／ △ ESTJ（シェパード）"
+  },
+  "ESFP": { code:"ESFP", name:"ダルメシアン", title:"太陽のように輝くエンターテイナー",
+    img:"https://cdn.pixabay.com/photo/2016/02/19/10/00/dalmatian-1209621_1920.jpg",
+    core:"人を楽しませる才能に満ちている。瞬間を生き、場を明るくする。",
+    love:"ドラマティックで情熱的。相手に楽しさを与えるが、深さも意識を。",
+    work:"接客・イベントで輝く。目の前の人を笑顔にする力がある。",
+    strength:"魅力・行動力・社交性。",
+    caution:"流されやすいので深掘りの時間を持つと吉。",
+    affinity:"◎ ENFP（ゴールデン）・ESFJ（プードル）・ESTP（ジャック） ／ △ INTJ（ドーベルマン）"
+  },
+  "INTJ": { code:"INTJ", name:"ドーベルマン", title:"静かなる戦略家",
+    img:"https://cdn.pixabay.com/photo/2016/03/27/18/10/doberman-1283814_1920.jpg",
+    core:"長期的な視点で計画を立て、着実に実行する孤高の戦術家。",
+    love:"知的に通じ合える相手と深い関係を築くのが理想。",
+    work:"研究・戦略・設計などで高い成果を出す。",
+    strength:"計画性・洞察力・自己統制。",
+    caution:"柔らかさを忘れると人間関係で摩擦が出ることがある。",
+    affinity:"◎ ENFJ（ラブラドール）・ENTP（プードル）・INFP（コーギー） ／ △ ESFP（ダルメシアン）"
+  },
+  "ISFP": { code:"ISFP", name:"シェットランド・シープドッグ", title:"優しさで世界を包むアーティスト",
+    img:"https://cdn.pixabay.com/photo/2017/09/25/13/12/dog-2785075_1280.jpg",
+    core:"感性を大切にし、美や心地よさを追求するクリエイティブタイプ。",
+    love:"穏やかで深い情感を大切にする関係を好む。",
+    work:"デザインや体験型の仕事で輝く。",
+    strength:"感受性・美的センス・繊細さ。",
+    caution:"自己表現を我慢するとストレスになるので発散法を持って。",
+    affinity:"◎ ESTJ（ブルドッグ）・ENTJ（ジャーマン）・ISFP（仲間） ／ △ ENFJ（ラブラドール）"
+  },
+  "INFP": { code:"INFP", name:"コーギー", title:"夢見る心の詩人",
+    img:"https://cdn.pixabay.com/photo/2016/02/22/17/55/chihuahua-1210558_1280.jpg",
+    core:"理想を追い求める心豊かな詩人タイプ。内面世界が深い。",
+    love:"感情の共有と誠実さを重視するロマンティックな恋愛観。",
+    work:"クリエイティブやカウンセリングで才能を発揮。",
+    strength:"共感力・誠実さ・理想追求。",
+    caution:"現実とぶつかったときのケアが必要。",
+    affinity:"◎ ENFJ（ラブラドール）・ENTP（プードル）・INFP（同志） ／ △ ESTJ（ブルドッグ）"
+  },
+  "ENTP": { code:"ENTP", name:"ボーダー・コリー", title:"好奇心の嵐を巻き起こす発明犬",
+    img:"https://cdn.pixabay.com/photo/2017/09/25/13/12/dog-2785076_1280.jpg",
+    core:"発想力と機転で新しい仕組みを作ることを楽しむチャレンジャー。",
+    love:"知的刺激のある関係がフィット。アイデアのキャッチボールが楽しい。",
+    work:"企画・起業・コンサルで躍動する。",
+    strength:"創造性・瞬発力・柔軟思考。",
+    caution:"アイデアを終わらせる習慣が必要。",
+    affinity:"◎ ISTJ（バセット）・INFJ（柴犬）・ENFP（ゴールデン） ／ △ ISFJ（ビーグル）"
+  },
+  "ESTP": { code:"ESTP", name:"ジャック・ラッセル・テリア", title:"瞬間を生きるストリートスマイル",
+    img:"https://cdn.pixabay.com/photo/2016/02/19/10/00/jack-russell-1209622_1280.jpg",
+    core:"行動力と機転で場を切り拓く現場型の冒険者。",
+    love:"情熱的だが自由を尊ぶため、相手にも自立を求める。",
+    work:"セールス・イベント・現場指揮で力を発揮。",
+    strength:"行動力・機転・勇気。",
+    caution:"軽率さが出ると摩擦のもとに。計画性を少し入れて。",
+    affinity:"◎ ISTJ（バセット）・ISFP（シェットランド）・ESFP（ダルメシアン） ／ △ INFP（コーギー）"
+  },
+  "ENFJ": { code:"ENFJ", name:"ラブラドール・レトリバー", title:"人を導く心のヒーロー",
+    img:"https://cdn.pixabay.com/photo/2017/09/25/13/12/labrador-2785074_1920.jpg",
+    core:"共感力に長け、人をまとめ育てるカリスマ的な支援者。",
+    love:"献身的に相手を支える関係を築きやすい。",
+    work:"教育・育成・コミュニティ運営で本領を発揮。",
+    strength:"共感・調整力・影響力。",
+    caution:"他者優先で自分を消耗しがち。限界線を意識して。",
+    affinity:"◎ INFP（コーギー）・INTJ（ドーベルマン）・ENFJ（自身） ／ △ ISTP（ハスキー）"
+  },
+  "ENTJ": { code:"ENTJ", name:"ジャーマン・シェパード", title:"統率と野心のリーダー",
+    img:"https://cdn.pixabay.com/photo/2019/08/23/19/45/german-shepherd-4425230_1920.jpg",
+    core:"強いビジョンと実行力で周囲を牽引する指揮官タイプ。",
+    love:"共に高め合うパートナーを好む。相互成長が鍵。",
+    work:"経営・戦略・組織作りで成果を出す。",
+    strength:"決断力・統率力・戦略性。",
+    caution:"冷たく見えがちなので、感情表現を意識して。",
+    affinity:"◎ INFP（コーギー）・INTJ（ドーベルマン）・ENTJ（自身） ／ △ ISFP（シェットランド）"
+  },
+  "ISFJ": { code:"ISFJ", name:"ビーグル", title:"思いやりの守護犬",
+    img:"https://cdn.pixabay.com/photo/2016/03/27/18/10/dog-1283811_1280.jpg",
+    core:"安定した配慮で周囲を支え、信頼される献身的な存在。",
+    love:"行動で愛を示すタイプ。信頼関係を大切にする。",
+    work:"サポート業務やケア職で頼りにされる。",
+    strength:"思いやり・実行力・安定感。",
+    caution:"自己犠牲になりやすいので休息を大切に。",
+    affinity:"◎ ESFP（ダルメシアン）・ISTP（ハスキー）・ISFJ（自身） ／ △ ENTP（ボーダー）"
+  },
+  "ISTJ": { code:"ISTJ", name:"バセット・ハウンド", title:"誠実と信頼の歩み",
+    img:"https://cdn.pixabay.com/photo/2016/02/22/17/55/basset-hound-1210560_1280.jpg",
+    core:"誠実で着実、ルールと秩序を重んじる頼れる存在。",
+    love:"堅実で安定した愛情を築く。口より行動で示す。",
+    work:"管理・監督・品質管理の分野で本領を発揮。",
+    strength:"信頼性・継続力・責任感。",
+    caution:"柔軟性を高めると人間関係がさらにうまくいく。",
+    affinity:"◎ ENFP（ゴールデン）・ISFP（シェットランド）・ESTP（ジャック） ／ △ INFP（コーギー）"
+  },
+  "ESFJ": { code:"ESFJ", name:"プードル", title:"愛され上手な社交家",
+    img:"https://cdn.pixabay.com/photo/2015/03/26/09/41/poodle-690551_1920.jpg",
+    core:"社交性に優れ、人を和ませるムードメーカー。場を整えるのが得意。",
+    love:"相手を気遣う行動で愛情を表現する。",
+    work:"ホスピタリティ・イベント運営で実力を発揮。",
+    strength:"社交性・気配り・調整力。",
+    caution:"他人の評価に引きずられないように自己軸を持って。",
+    affinity:"◎ ISTP（ハスキー）・INTP（グレイハウンド）・ESFP（ダルメシアン） ／ △ ENTP（ボーダー）"
+  },
+  "ESTJ": { code:"ESTJ", name:"ブルドッグ", title:"地に足のついた現実主義者",
+    img:"https://cdn.pixabay.com/photo/2016/02/19/10/00/bulldog-1209620_1280.jpg",
+    core:"秩序と効率を重視し、現実的に物事を動かす実務家。",
+    love:"責任感が強く安定したパートナーになる。",
+    work:"現場の管理や改善、オペレーションで光る。",
+    strength:"実行力・信頼・現実対応力。",
+    caution:"過度に厳格になりすぎないよう相手の柔らかさを受け入れて。",
+    affinity:"◎ ISFP（シェットランド）・INFP（コーギー）・ESTJ（自身） ／ △ INFJ（柴犬）"
+  },
+  "INTP": { code:"INTP", name:"グレイハウンド", title:"孤高の思索ランナー",
+    img:"https://cdn.pixabay.com/photo/2015/03/26/09/41/dog-690552_1280.jpg",
+    core:"概念や原理を探求する理論家。深く考えることを好む。",
+    love:"知的な共鳴を重視するが、感情表現は控えめになりがち。",
+    work:"研究・設計・分析系で長所を発揮。",
+    strength:"分析力・独創性・集中力.",
+    caution:"言葉が冷たく聞こえることがあるので配慮を。",
+    affinity:"◎ ESFJ（プードル）・ENTP（ボーダー）・INTP（自身） ／ △ ESTJ（ブルドッグ）"
+  },
+  "ISTP": { code:"ISTP", name:"シベリアン・ハスキー", title:"自由を駆ける孤高の冒険者",
+    img:"https://cdn.pixabay.com/photo/2016/02/19/10/00/siberian-husky-1209619_1280.jpg",
+    core:"行動力と独立心があり、未知の体験に強いタイプ。",
+    love:"自由を尊重しあえる関係がうまくいく。",
+    work:"機械・現場・フィールドワークで実力を発揮。",
+    strength:"適応力・瞬発力・冷静さ。",
+    caution:"感情表現を補うと人間関係が円滑になる。",
+    affinity:"◎ ESFJ（プードル）・ISTP（自身）・ENTP（ボーダー） ／ △ ENFJ（ラブラドール）"
+  }
+}; // end TYPE_MAP
+
+/* ---------- helpers ---------- */
+function readRadios(names){
+  const counts = {E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
+  for(let i=1;i<=8;i++){
+    const el = document.querySelector(`input[name="q${i}"]:checked`);
+    if(!el) return null;
+    counts[el.value]++;
+  }
+  // build code: E/I + S/N + T/F + J/P
+  const code = (counts.E >= counts.I ? 'E':'I') + (counts.S >= counts.N ? 'S':'N') + (counts.T >= counts.F ? 'T':'F') + (counts.J >= counts.P ? 'J':'P');
+  return code;
+}
+
+/* ---------- event: diagnose ---------- */
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  const code = readRadios();
+  if(!code){ alert('全ての質問に答えてください。'); return; }
+  const data = TYPE_MAP[code];
+  if(!data){ alert('未登録のタイプ: ' + code); return; }
+  const name = document.getElementById('inputName').value.trim() || 'あなた';
+  // fill UI
+  document.getElementById('typePulse').textContent = data.title;
+  document.getElementById('resultTitle').textContent = `${name}さんの魂の犬種は【${data.name}】`;
+  document.getElementById('resultCode').textContent = `(${data.code})`;
+  document.getElementById('resultImg').src = data.img;
+  document.getElementById('resultImg').alt = data.name;
+  document.getElementById('f-core').textContent = data.core;
+  document.getElementById('f-love').textContent = data.love;
+  document.getElementById('f-work').textContent = data.work;
+  document.getElementById('f-strength').textContent = data.strength;
+  document.getElementById('f-caution').textContent = data.caution;
+  document.getElementById('f-affinity').innerHTML = data.affinity;
+  // show result
+  document.getElementById('resultCard').style.display = 'block';
+  window.scrollTo({top: document.getElementById('resultCard').offsetTop - 20, behavior:'smooth'});
+  // prepare shares
+  const shareText = encodeURIComponent(`${name}さんの犬タイプは【${data.name}】(${data.code}) — ${data.title}  #魂の犬種診断`);
+  const shareUrl = encodeURIComponent(location.href);
+  document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+  document.getElementById('shareLine').href = `https://social-plugins.line.me/lineit/share?url=${shareUrl}&text=${shareText}`;
+  // store
+  localStorage.setItem('lastDogType', code);
+});
+
+/* ---------- reset ---------- */
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+  document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked = false);
+  document.getElementById('inputName').value = '';
+  document.getElementById('resultCard').style.display = 'none';
+  localStorage.removeItem('lastDogType');
+});
+
+/* ---------- copy text ---------- */
+document.getElementById('copyTextBtn').addEventListener('click', ()=>{
+  const lines = [];
+  lines.push(document.getElementById('resultTitle').textContent);
+  lines.push(document.getElementById('resultCode').textContent);
+  lines.push('\n性格：' + document.getElementById('f-core').textContent);
+  lines.push('恋愛：' + document.getElementById('f-love').textContent);
+  lines.push('仕事：' + document.getElementById('f-work').textContent);
+  lines.push('強み：' + document.getElementById('f-strength').textContent);
+  lines.push('注意：' + document.getElementById('f-caution').textContent);
+  lines.push('相性：' + document.getElementById('f-affinity').textContent);
+  const text = lines.join('\n\n');
+  navigator.clipboard?.writeText(text).then(()=> alert('診断結果をコピーしました！')).catch(()=> alert('コピーに失敗しました。手動で選択してください。'));
+});
+
+/* ---------- affinity check ---------- */
+document.getElementById('checkAffinityBtn').addEventListener('click', ()=>{
+  const myCode = localStorage.getItem('lastDogType') || document.getElementById('resultCode').textContent.replace(/[()]/g,'');
+  const partner = (document.getElementById('partnerInput').value || '').trim().toUpperCase();
+  const out = document.getElementById('affinityResult');
+  if(!myCode){ out.textContent = 'まず診断を行ってください。'; return; }
+  if(!partner || !TYPE_MAP[partner]){ out.innerHTML = '<span style="color:#c0392b;">相手のタイプコードを正しく入力してください（例：ENFP）</span>'; return; }
+  const mine = TYPE_MAP[myCode];
+  const theirs = TYPE_MAP[partner];
+  // deeper reasoning: check if partner code appears in 'affinity' string of mine (◎) or in '△'
+  let verdict = '';
+  if(mine.affinity.includes('◎') && mine.affinity.includes(partner)) {
+    verdict = '💖 奇跡の相性！';
+  } else if (mine.affinity.includes(partner)) {
+    verdict = '💖 相性が非常に良いです。';
+  } else if (mine.affinity.includes('△') || mine.affinity.includes(theirs.code) || mine.affinity.includes(theirs.name)) {
+    verdict = '⚠️ 要注意な組み合わせ。理解と努力が必要です。';
+  } else {
+    verdict = '🔷 落ち着いた良好な関係。理解を深めるともっと良くなります。';
+  }
+  // produce a friendly explanation
+  const reason = `あなた（${mine.name}）と相手（${theirs.name}）は、性格の持ち味が${verdict.startsWith('💖') ? '互いに補い合う' : verdict.startsWith('⚠️') ? '異なるため衝突が生まれやすい' : '穏やかに噛み合う'}傾向があります。`;
+  out.innerHTML = `<strong>${verdict}</strong> <div style="margin-top:6px">${reason}</div>`;
+});
+
+/* ---------- download PNG (card) ---------- */
+document.getElementById('downloadCardBtn').addEventListener('click', ()=>{
+  const card = document.getElementById('resultCard');
+  // use html2canvas on the inner card-for-download area; here we capture resultCard
+  html2canvas(card, {scale:2, useCORS:true, backgroundColor:null}).then(canvas=>{
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    const code = (document.getElementById('resultCode').textContent || 'result').replace(/[()]/g,'');
+    link.download = `soul_dog_${code}.png`;
+    link.click();
+  }).catch(err=>{
+    console.error(err);
+    alert('カード画像の生成に失敗しました。ブラウザのコンソールを確認してください。');
+  });
+});
+
+/* ---------- on load: ensure fresh start ---------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  // always start with quiz visible
+  document.getElementById('resultCard').style.display = 'none';
+  // (optional) if you want to restore previous answers, implement here
+});
+</script>
+</body>
+</html>
